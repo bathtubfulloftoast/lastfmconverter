@@ -1,0 +1,15 @@
+{
+  "name": "lastfm-coverart-converter",
+  "version": "0.5",
+  "description": "a program that takes coverart from lastfm and converts it",
+  "license": "ISC",
+  "author": "BathtubFullOfToast",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
