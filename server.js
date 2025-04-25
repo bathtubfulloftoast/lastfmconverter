@@ -1,6 +1,24 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+
+
+
+try {
+    if (!fs.existsSync("full")) {
+        fs.mkdirSync("full");
+    }
+} catch (err) {
+    console.error(err);
+}
+try {
+    if (!fs.existsSync("converted")) {
+        fs.mkdirSync("converted");
+    }
+} catch (err) {
+    console.error(err);
+}
 
 const app = express();
 const port = 4567;
