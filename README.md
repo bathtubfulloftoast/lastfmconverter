@@ -1,6 +1,8 @@
 # Last.FM Album Converter
 grabs album coverart from last.fm and converts it with more options
 
+public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/?file=2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20)
+
 ## URL Structure
 
 | Thing | What it do |
