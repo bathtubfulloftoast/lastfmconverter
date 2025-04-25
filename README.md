@@ -27,7 +27,7 @@ the cover id will be the file in that url
 ex: ``c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 
 ## todo
-* readd censorship
+* readd censorship (scale down + scale back up with nearest filtering)
 * make censhorship round to nearest five
 * add "api" /albumcovers/info/(regular url params) (basic file info)
 * remove index.html and make it redirect to repo instead
