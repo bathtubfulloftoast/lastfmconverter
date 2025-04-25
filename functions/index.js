@@ -12,7 +12,7 @@ function roundToTwo(num) {
     return +(Math.round(num + "e+2")  + "e-2");
 }
 
-const filetypes = ["png","jpg","jpeg","gif","webp"];
+const filetypes = ["png","jpg","jpeg","webp"];
 
 export default async function lastfmHandler(req, res) {
 
@@ -28,13 +28,6 @@ let filext = filematch?.[2];
 
 format = format.toLowerCase();
 filext = filext.toLowerCase();
-
-
-if (size > 2048) {
-size = 2048;
-} else if (size < 16) {
-size = 16;
-}
 
 if (censored > 65) {
 censored = 65;
@@ -55,28 +48,29 @@ return res.status(400).json({error:"invalid conversion filetype"});
 } else if (!filetypes.includes(filext)) {
 return res.status(400).json({error:"invalid filetype"});
 } else if (!fs.existsSync(`full/${file}`)) {
-const grabbedimage = await grabimage(file);
+    const grabbedimage = await grabimage(file);
 
-if (grabbedimage == "error") {
-return res.status(400).json({error:"invalid album cover"});
-} else {
-
-fs.writeFile(`./full/${file}`, grabbedimage, err => {
-if (err) {
-console.error(err);
-} else {
-console.log(`cached "${file}" successfully`);
+    if (grabbedimage == "error") {
+        return res.status(400).json({ error: "invalid album cover" });
+    } else {
+        // await the write
+        await new Promise((resolve, reject) => {
+            fs.writeFile(`./full/${file}`, grabbedimage, err => {
+                if (err) {
+                    console.error(err);
+                    return reject(err);
+                } else {
+                    console.log(`cached "${file}" successfully`);
+                    return resolve();
+                }
+            });
+        });
+    }
 }
-});
-}
-}
-
-
-size = Math.pow(2, Math.floor(Math.log2(size)));
 
 
 const outputimage = await convertimage(file, size, format, censored);
-res.set('Content-Type', 'image/jpeg');
+res.set('Content-Type', 'image/webp');
 res.setHeader('Content-Disposition', `inline; filename="${filnme}.${format}"`);
 
 return res.status(200).send(outputimage);
