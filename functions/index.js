@@ -100,7 +100,7 @@ fs.readFile(`./converted/${destination}`, (err, data) => {
     console.error(err);
     return;
   }
-  console.log("grabbed cached convert");
+  console.log(`grabbed cached convert "${destination}"`);
   return res.status(200).send(data);
 });
 
