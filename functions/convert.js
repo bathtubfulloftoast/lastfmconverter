@@ -14,25 +14,18 @@ export async function convertimage(file, size, format, censor) {
         size = ogsize;
         }
 
-        if (size > 2048) {
-            size = 2048;
-        } else if (size < 16) {
-            size = 16;
-        }
-
-        size = Math.pow(2, Math.floor(Math.log2(size)));
+        size = Math.pow(2, Math.floor(Math.log2(size))); // restate this in case it gets out of hand. (that one pixel difference WILL NOT happen on my track)
 
 
         let output = image.resize({ width: size });
 
-        // Apply format-specific conversion
         if (format === 'jpeg' || format === 'jpg') {
             output = output.jpeg({ mozjpeg: true });
         } else if (format === 'png') {
             output = output.png();
         } else if (format === 'webp') {
             output = output.webp();
-        } // Add more formats as needed
+        }
 
         const buffer = await output.toBuffer();
 
