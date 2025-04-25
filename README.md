@@ -29,5 +29,6 @@ ex: ``c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 ## todo
 * readd censorship
 * make censhorship round to nearest five
-* add "api" (basic file info)
+* add "api" /albumcovers/info/(regular url params) (basic file info)
 * remove index.html and make it redirect to repo instead
+* view album cover in original quality /albumcovers/full/(image)
