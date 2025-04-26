@@ -4,122 +4,86 @@ import { md5 } from 'js-md5';
 import { convertimage } from './convert.js';
 import { grabimage } from './grab.js';
 
-let size;
-let file;
-let format;
-let censored;
-let destination;
+const filetypes = ["png", "jpg", "jpeg", "webp"];
 
 function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
+    return +(Math.round(num + "e+2") + "e-2");
 }
-
-const filetypes = ["png","jpg","jpeg","webp"];
 
 export default async function lastfmHandler(req, res) {
+    let { size, file, format, censored } = req.query;
 
-size = req.query.size;
-file = req.query.file || "invalid";
-format = req.query.format;
-censored = req.query.censored;
-
-var filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
-
-let filnme = filematch?.[1];
-let filext = filematch?.[2];
-
-
-
-if (size > 2048) {
-    size = 2048;
-} else if (size < 16) {
-    size = 16;
-}
-
-if (censored > 65) {
-censored = 65;
-} else if (censored < 5) {
-censored = 5;
-} else if (!censored) {
-censored = 0;
-}
-
-censored = Number(censored);
-
-censored = Math.floor(censored / 5) * 5;
-size = Math.pow(2, Math.floor(Math.log2(size)));
-
-
-destination = md5(size+file+format+censored+format)+`.${format}`;
-
-if (file == "invalid") {
-return res.status(400).json({error:"no file set"});
-} else if (/[^0-9]/.test(size)) {
-return res.status(400).json({error:"invalid size"});
-} else if (/[^0-9]/.test(censored)) {
-return res.status(400).json({error:"invalid censorship level"});
-} else if (!filetypes.includes(format)) {
-return res.status(400).json({error:"invalid conversion filetype"});
-} else if (!filetypes.includes(filext)) {
-return res.status(400).json({error:"invalid source filetype"});
-} else if (!fs.existsSync(`full/${file}`)) {
-    const grabbedimage = await grabimage(file);
-
-    if (grabbedimage == "error") {
-        return res.status(400).json({ error: "invalid album cover" });
-    } else {
-        // await the write
-        await new Promise((resolve, reject) => {
-            fs.writeFile(`./full/${file}`, grabbedimage, err => {
-                if (err) {
-                    console.error(err);
-                    return reject(err);
-                } else {
-                    console.log(`cached "${file}" successfully`);
-                    return resolve();
-                }
-            });
-        });
+    if (!file || file === "invalid") {
+        return res.status(400).json({ error: "no file set" });
     }
-}
 
-format = format.toLowerCase();
-filext = filext.toLowerCase();
+    let filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
+    let filnme = filematch?.[1];
+    let filext = filematch?.[2];
 
+    if (size > 2048) size = 2048;
+    else if (size < 16) size = 16;
 
-if (format === 'jpeg' || format === 'jpg') {
-    res.set('Content-Type', 'image/jpeg');
-} else if (format === 'png') {
-    res.set('Content-Type', 'image/png');
-} else if (format === 'webp') {
-    res.set('Content-Type', 'image/webp');
-} // me when i hardcode the content type
+    censored = Number(censored);
+    if (censored > 65) censored = 65;
+    else if (censored < 5) censored = 5;
+    if (!censored) censored = 0;
 
-res.setHeader('Content-Disposition', `inline; filename="${filnme}.${format}"`);
+    censored = Math.floor(censored / 5) * 5;
+    size = Math.pow(2, Math.floor(Math.log2(size)));
 
+    const destination = md5(size + file + format + censored + format) + `.${format}`;
 
+    if (/[^0-9]/.test(size)) {
+        return res.status(400).json({ error: "invalid size" });
+    }
+    if (/[^0-9]/.test(censored)) {
+        return res.status(400).json({ error: "invalid censorship level" });
+    }
+    if (!filetypes.includes(format)) {
+        return res.status(400).json({ error: "invalid conversion filetype" });
+    }
+    if (!filetypes.includes(filext)) {
+        return res.status(400).json({ error: "invalid source filetype" });
+    }
 
-if (fs.existsSync(`./converted/${destination}`)) {
+    // Check if the file exists
+    if (!fs.existsSync(`full/${file}`)) {
+        const grabbedimage = await grabimage(file);
+        if (grabbedimage === "error") {
+            return res.status(400).json({ error: "invalid album cover" });
+        }
+        await fs.promises.writeFile(`./full/${file}`, grabbedimage);
+        console.log(`cached "${file}" successfully`);
+    }
 
-fs.readFile(`./converted/${destination}`, (err, data) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log(`grabbed cached convert "${destination}"`);
-  return res.status(200).send(data);
-});
+    // Set content type for response
+    format = format.toLowerCase();
+    filext = filext.toLowerCase();
+    const contentTypeMap = {
+        'jpeg': 'image/jpeg',
+        'jpg': 'image/jpeg',
+        'png': 'image/png',
+        'webp': 'image/webp',
+    };
+    res.set('Content-Type', contentTypeMap[format]);
 
-} else {
-const outputimage = await convertimage(file, size, format, censored);
+    res.setHeader('Content-Disposition', `inline; filename="${filnme}.${format}"`);
 
-fs.writeFile(`./converted/${destination}`, outputimage, err => {
-  if (err) {
-    console.error(err);
-  } else {
-  console.log(`cached "${destination}"`);
-  return res.status(200).send(outputimage);
-  }
-});
-}
+    // Check if the converted file already exists
+    try {
+        if (await fs.promises.access(`./converted/${destination}`).then(() => true).catch(() => false)) {
+            const data = await fs.promises.readFile(`./converted/${destination}`);
+            console.log(`grabbed cached convert "${destination}"`);
+            return res.status(200).send(data);
+        } else {
+            const outputimage = await convertimage(file, size, format, censored);
+            await fs.promises.writeFile(`./converted/${destination}`, outputimage);
+            console.log(`cached "${destination}"`);
+            return res.status(200).send(outputimage);
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "internal server error" });
+    }
 }
