@@ -33,3 +33,4 @@ ex: ``c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 
 ## TODO
 * add /info section 
+* remove excess converts
