@@ -19,7 +19,7 @@ const filetypes = ["png","jpg","jpeg","webp"];
 export default async function lastfmHandler(req, res) {
 
 size = req.query.size;
-file = req.query.file;
+file = req.query.file || "invalid";
 format = req.query.format;
 censored = req.query.censored;
 
@@ -28,8 +28,7 @@ var filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
 let filnme = filematch?.[1];
 let filext = filematch?.[2];
 
-format = format.toLowerCase();
-filext = filext.toLowerCase();
+
 
 if (size > 2048) {
     size = 2048;
@@ -45,19 +44,24 @@ censored = 5;
 censored = 0;
 }
 
+censored = Number(censored);
+
+censored = Math.floor(censored / 5) * 5;
 size = Math.pow(2, Math.floor(Math.log2(size)));
 
 
 destination = md5(size+file+format+censored)+`.${format}`;
 
-if (/[^0-9]/.test(size)) {
+if (file == "invalid") {
+return res.status(400).json({error:"no file set"});
+} else if (/[^0-9]/.test(size)) {
 return res.status(400).json({error:"invalid size"});
 } else if (/[^0-9]/.test(censored)) {
 return res.status(400).json({error:"invalid censorship level"});
 } else if (!filetypes.includes(format)) {
 return res.status(400).json({error:"invalid conversion filetype"});
 } else if (!filetypes.includes(filext)) {
-return res.status(400).json({error:"invalid filetype"});
+return res.status(400).json({error:"invalid source filetype"});
 } else if (!fs.existsSync(`full/${file}`)) {
     const grabbedimage = await grabimage(file);
 
@@ -79,6 +83,8 @@ return res.status(400).json({error:"invalid filetype"});
     }
 }
 
+format = format.toLowerCase();
+filext = filext.toLowerCase();
 
 
 if (format === 'jpeg' || format === 'jpg') {
@@ -116,8 +122,4 @@ fs.writeFile(`./converted/${destination}`, outputimage, err => {
   }
 });
 }
-
-
-
-//return res.status(200).json({size:size,file:file,format:format,censored:censored});
 }

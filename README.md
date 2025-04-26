@@ -15,7 +15,7 @@ public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/?fi
 
 **Example URL**
 
-``http://localhost:4567/albumcovers/?file=2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20``
+``http://localhost:4567/albumcovers/?file=c2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20``
 ## how do i get the cover id?
 
 in the result of your lastfm api call youll see a url like this.
@@ -27,9 +27,5 @@ the cover id will be the file in that url
 ex: ``c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 
 ## todo
-* readd censorship (scale down + scale back up with nearest filtering)
-* make censhorship round to nearest five
 * add "api" /albumcovers/info/(regular url params) (basic file info)
-* remove index.html and make it redirect to repo instead
 * view album cover in original quality /albumcovers/full/(image)
-* look more into filters https://sharp.pixelplumbing.com/api-operation/

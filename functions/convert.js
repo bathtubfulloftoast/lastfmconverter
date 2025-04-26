@@ -1,6 +1,10 @@
 import sharp from 'sharp';
 
+
+
 export async function convertimage(file, size, format, censor) {
+    let output;
+    let censored;
     try {
         const inputPath = `./full/${file}`;
         const image = await sharp(inputPath);
@@ -14,10 +18,20 @@ export async function convertimage(file, size, format, censor) {
         size = ogsize;
         }
 
-        size = Math.pow(2, Math.floor(Math.log2(size))); // restate this in case it gets out of hand. (that one pixel difference WILL NOT happen on my track)
+        if (censor == 0) {
+            output = image.resize({ width: size, height: size, fit: "inside" });
+        } else {
+        const tinyBuffer = await image
+        .resize({ width: 500, height: 500, fit: "fill"  })
+        .gamma(3,2)
+        .blur(Math.round(censor/2))
+        .toBuffer();
+
+        censored = sharp(tinyBuffer);
+        output = censored.resize({ width: size, height: size, fit: "fill" });
+        }
 
 
-        let output = image.resize({ width: size });
 
         if (format === 'jpeg' || format === 'jpg') {
             output = output.jpeg({ mozjpeg: true });
