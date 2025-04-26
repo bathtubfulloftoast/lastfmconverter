@@ -6,7 +6,7 @@ export async function grabimage(file) {
 
         if (!response.ok) {
         console.log(`cover "${file}" failed to grab with status ${response.status} (${response.statusText})`);
-        return "error"; // technology!!!!!! isnt it so wonderfulk....
+        return "error";
         }
 
         console.log(`grabbed "${file}" from lastfm`);

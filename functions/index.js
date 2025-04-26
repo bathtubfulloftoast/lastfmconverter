@@ -6,10 +6,6 @@ import { grabimage } from './grab.js';
 
 const filetypes = ["png", "jpg", "jpeg", "webp"];
 
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2") + "e-2");
-}
-
 export default async function lastfmHandler(req, res) {
     let { size, file, format, censored } = req.query;
 
@@ -57,7 +53,6 @@ export default async function lastfmHandler(req, res) {
         console.log(`cached "${file}" successfully`);
     }
 
-    // Set content type for response
     format = format.toLowerCase();
     filext = filext.toLowerCase();
     const contentTypeMap = {
@@ -70,7 +65,6 @@ export default async function lastfmHandler(req, res) {
 
     res.setHeader('Content-Disposition', `inline; filename="${filnme}.${format}"`);
 
-    // Check if the converted file already exists
     try {
         if (await fs.promises.access(`./converted/${destination}`).then(() => true).catch(() => false)) {
             const data = await fs.promises.readFile(`./converted/${destination}`);

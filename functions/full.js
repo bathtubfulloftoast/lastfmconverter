@@ -25,7 +25,6 @@ export default async function(req, res) {
             if (grabbedimage === "error") {
                 return res.status(400).json({ error: "invalid album cover" });
             } else {
-                // await the write
                 await new Promise((resolve, reject) => {
                     fs.writeFile(imagePath, grabbedimage, err => {
                         if (err) {
@@ -38,7 +37,6 @@ export default async function(req, res) {
                     });
                 });
 
-                // After saving the new image, serve it
                 const newImage = await fs.promises.readFile(imagePath);
                 res.set('Content-Type', mime_type);
                 return res.status(200).send(newImage);
