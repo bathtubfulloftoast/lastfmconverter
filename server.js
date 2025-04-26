@@ -1,8 +1,6 @@
 import express from 'express';
 import fs from 'node:fs';
 
-
-
 try {
     if (!fs.existsSync("full")) {
         fs.mkdirSync("full");
@@ -22,6 +20,7 @@ const app = express();
 const port = 4567;
 
 import index from './functions/index.js';
+import fullsize from './functions/full.js';
 
 
 app.get('/', (req, res) => {
@@ -29,7 +28,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/albumcovers', index);
+app.get('/albumcovers/full/:image', fullsize);
+
+app.use((req, res) => {
+    res.status(404).json({error: "404 not found"});
+});
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`app listening on port ${port}`);
 });

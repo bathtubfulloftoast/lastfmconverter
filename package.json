@@ -1,6 +1,6 @@
 {
   "name": "lastfm-coverart-converter",
-  "version": "0.5",
+  "version": "1.0",
   "description": "a program that takes coverart from lastfm and converts it",
   "license": "ISC",
   "author": "BathtubFullOfToast",
@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "js-md5": "^0.8.3",
+    "mime": "^4.0.7",
     "sharp": "^0.34.1"
   }
 }

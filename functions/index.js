@@ -50,7 +50,7 @@ censored = Math.floor(censored / 5) * 5;
 size = Math.pow(2, Math.floor(Math.log2(size)));
 
 
-destination = md5(size+file+format+censored)+`.${format}`;
+destination = md5(size+file+format+censored+format)+`.${format}`;
 
 if (file == "invalid") {
 return res.status(400).json({error:"no file set"});

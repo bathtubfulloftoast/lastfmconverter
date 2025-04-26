@@ -15,7 +15,13 @@ public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/?fi
 
 **Example URL**
 
+convert:
+
 ``http://localhost:4567/albumcovers/?file=c2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20``
+
+fullsize:
+
+``http://localhost:4567/albumcovers/full/c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 ## how do i get the cover id?
 
 in the result of your lastfm api call youll see a url like this.
@@ -26,6 +32,5 @@ the cover id will be the file in that url
 
 ex: ``c2a96d7fd7f746c9a8af1623cf6aa30a.jpg``
 
-## todo
-* add "api" /albumcovers/info/(regular url params) (basic file info)
-* view album cover in original quality /albumcovers/full/(image)
+## TODO
+* add /info section 
