@@ -13,6 +13,10 @@ export default async function lastfmHandler(req, res) {
         return res.status(400).json({ error: "no file set" });
     }
 
+    file = file.split('/').reverse()[0];
+    file = file.replace(/\.{2,}/, ".");
+    // no ../ in this house
+
     let filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
     let filnme = filematch?.[1];
     let filext = filematch?.[2];

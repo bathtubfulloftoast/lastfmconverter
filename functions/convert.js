@@ -12,7 +12,7 @@ export async function convertimage(file, size, format, censor) {
         const metadata = await image.metadata();
         const width = metadata.width;
         const height = metadata.height;
-        var ogsize = ((width+height)/2);
+        var ogsize = Math.floor((width+height)/2);
 
         if (ogsize < size) {
         size = ogsize;
