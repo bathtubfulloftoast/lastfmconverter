@@ -6,7 +6,7 @@ export async function convertimage(file, size, format, censor) {
     let output;
     let censored;
     try {
-        const inputPath = `./full/${file}`;
+        const inputPath = `${file}`;
         const image = await sharp(inputPath);
 
         const metadata = await image.metadata();
