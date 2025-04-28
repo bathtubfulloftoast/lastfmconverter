@@ -23,7 +23,7 @@ export default async function(req, res) {
             const grabbedimage = await grabimage(image);
 
             if (grabbedimage === "error") {
-                return res.status(400).json({ error: "invalid album cover" });
+                return res.status(404).json({ error: "album cover not found" });
             } else {
                 await new Promise((resolve, reject) => {
                     fs.writeFile(imagePath, grabbedimage, err => {
