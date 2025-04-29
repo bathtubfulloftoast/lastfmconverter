@@ -1,5 +1,16 @@
+const filetypes = ["png", "jpg", "jpeg", "webp"];
+
 export async function grabimage(file) {
+    let filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
+    let filext = filematch?.[2];
+
+    if (!filetypes.includes(filext)) {
+    return "error";//apparently i need to handle this because lastfm doesnt want to sometimes???
+    }
+
     let url = `https://lastfm.freetls.fastly.net/i/u/${file}`;
+
+
 
     try {
         const response = await fetch(url);

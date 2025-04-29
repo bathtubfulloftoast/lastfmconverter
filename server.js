@@ -21,14 +21,16 @@ const port = 4567;
 
 import index from './functions/index.js';
 import fullsize from './functions/full.js';
+import info from './functions/info.js';
 
 
 app.get('/', (req, res) => {
     res.redirect('https://github.com/bathtubfulloftoast/lastfmconverter');
 });
 
-app.get('/albumcovers', index);
+app.get('/albumcovers/:image', index);
 app.get('/albumcovers/full/:image', fullsize);
+app.get('/albumcovers/info/:image', info);
 
 app.use((req, res) => {
     res.status(404).json({error: "404 not found"});

@@ -7,9 +7,13 @@ import { grabimage } from './grab.js';
 const filetypes = ["png", "jpg", "jpeg", "webp"];
 
 export default async function lastfmHandler(req, res) {
-    let { size, file, format, censored } = req.query;
+    let { size, format, censored } = req.query;
+    let file = req.params.image;
     let sourcefile;
     let errorid;
+
+    size ??= 512;
+    format ??= "jpg";
 
     if (!file) {
     return res.status(400).json({ error: "no file set" });
@@ -36,7 +40,9 @@ export default async function lastfmHandler(req, res) {
     censored = Math.floor(censored / 5) * 5;
     size = Math.pow(2, Math.floor(Math.log2(size)));
 
-    const destination = md5(size + file + format + censored + format) + `.${format}`;
+
+    let newid = md5(size + file + format + censored + format);
+    let destination = `${newid}.${format}`;
 
     if (/[^0-9]/.test(size)) {
     return res.status(400).json({ error: "invalid size" });
@@ -49,6 +55,11 @@ export default async function lastfmHandler(req, res) {
     }
     if (!filetypes.includes(filext)) {
     return res.status(400).json({ error: "invalid source filetype" });
+    }
+    if (filnme == "2a96cbd8b46e442fc41c2b86b821562f") {
+    return res.status(400).json({ error: "lastfm is providing placeholder art" });
+    // i fucking hate this thing why does it exist???
+    // okay i can think of a few reasons but i dont respect them
     }
 
     // Check if the file exists
@@ -71,7 +82,8 @@ export default async function lastfmHandler(req, res) {
     };
     res.set('Content-Type', contentTypeMap[format]);
 
-    res.setHeader('Content-Disposition', `inline; filename="${filnme}.${format}"`);
+    res.setHeader('Content-Disposition', `inline; filename="${newid}.${format}"`);
+
 
     try {
         if (await fs.promises.access(`./converted/${destination}`).then(() => true).catch(() => false)) {

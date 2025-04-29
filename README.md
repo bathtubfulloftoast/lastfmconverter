@@ -1,7 +1,7 @@
 # Last.FM CoverArt Converter
 grabs album art from last.fm and converts it with more options
 
-public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/?file=c2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20)
+public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/c2a96d7fd7f746c9a8af1623cf6aa30a.jpg?size=512&format=webp&censored=20)
 
 ## URL Structure
 
@@ -16,7 +16,7 @@ public instance at [cdn.novassite.net](https://cdn.novassite.net/albumcovers/?fi
 
 convert:
 
-``http://localhost:4567/albumcovers/?file=c2a96d7fd7f746c9a8af1623cf6aa30a.jpg&size=512&format=webp&censored=20``
+``http://localhost:4567/albumcovers/c2a96d7fd7f746c9a8af1623cf6aa30a.jpg?size=512&format=webp&censored=20``
 
 fullsize:
 

@@ -1,10 +1,9 @@
 import sharp from 'sharp';
 
-
-
 export async function convertimage(file, size, format, censor) {
     let output;
     let censored;
+    let blurred;
     try {
         const inputPath = `${file}`;
         const image = await sharp(inputPath);
@@ -21,14 +20,20 @@ export async function convertimage(file, size, format, censor) {
         if (censor == 0) {
             output = image.resize({ width: size, height: size, fit: "inside" });
         } else {
-        const tinyBuffer = await image
-        .resize({ width: 500, height: 500, fit: "fill"  })
+        const blurBuffer = await image
+        .resize({ width: 100, height: 100, fit: "fill"  })
+        .blur(1.5)
         .gamma(3,2)
-        .blur(Math.round(censor/2))
         .toBuffer();
 
-        censored = sharp(tinyBuffer);
-        output = censored.resize({ width: size, height: size, fit: "fill" });
+        blurred = sharp(blurBuffer);
+
+        const scaleBuffer = await blurred
+        .resize({ width: censor, height: censor, fit: "fill",kernel: sharp.kernel.nearest  })
+        .toBuffer();
+
+        censored = sharp(scaleBuffer);
+        output = censored.resize({ width: size, height: size, fit: "fill",kernel: sharp.kernel.nearest });
         }
 
 
