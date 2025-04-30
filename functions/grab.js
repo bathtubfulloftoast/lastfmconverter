@@ -1,4 +1,4 @@
-const filetypes = ["png", "jpg", "jpeg", "webp"];
+const filetypes = ["png", "jpg"];
 
 export async function grabimage(file) {
     let filematch = file.match(/(?:\/|\\)?([^\/\\]+)\.(\w+)$/);
