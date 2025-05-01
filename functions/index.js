@@ -12,8 +12,8 @@ export default async function lastfmHandler(req, res) {
     let sourcefile;
     let errorid;
 
-    size ??= 512;
-    format ??= "jpg";
+    size ??= 800;
+    format ??= "webp";
 
     if (!file) {
     return res.status(400).json({ error: "no file set" });
